@@ -16,16 +16,46 @@ class App extends Component {
         this.loadData();
         console.log('d3', d3);
 
-        this.loadD3();
+        //this.loadD3();
     }
 
     async loadData() {
         const response = await fetch('https://api.github.com/repos/facebook/react/commits');
         const json = await response.json();
 
+        const commitsObject = (json || []).reduce((accumulator, currentValue) => {
+            const {author} = currentValue;
+            const {login} = author;
+
+            if (!accumulator.hasOwnProperty(login)) {
+                accumulator[login] = 0;
+            }
+            accumulator[login] += 1;
+
+            return accumulator;
+        }, {});
+
         this.setState(() => ({
-            commits: json
+            commits: Object.keys(commitsObject).map(author => {
+                return {
+                    author,
+                    amount: commitsObject[author]
+                };
+            })
         }));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const {commits} = this.state;
+
+        d3.select('.chart')
+            .selectAll('div')
+            .data(commits)
+            .enter().append('div')
+            .style('width', function (commiter) {
+                return commiter.amount * 100 + 'px';
+            })
+            .text(commiter => `${commiter.author} - ${commiter.amount}`);
     }
 
     loadD3() {
