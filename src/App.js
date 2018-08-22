@@ -71,6 +71,22 @@ class App extends Component {
             .text(d => d);
     }
 
+    renderLinearScale() {
+        const svg = d3.select('.main').append('svg');
+
+        svg
+            .attr('width', 600)
+            .attr('height', 300);
+
+        const y = d3.scaleLinear()
+            .domain([15, 90])
+            .range([0, 250]);
+
+        const x = d3.scaleLog()
+            .domain([250, 100000])
+            .range([0, 600]);
+    }
+
     render() {
         return (
             <div className="App">
@@ -81,6 +97,7 @@ class App extends Component {
                 <p className="App-intro">
                     {this.state.commits.length}
                 </p>
+                <div className="main"></div>
                 <div className="chart"/>
             </div>
         );
