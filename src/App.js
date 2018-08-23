@@ -13,10 +13,11 @@ class App extends Component {
     };
 
     componentDidMount() {
-        this.loadData();
+        //this.loadData();
         console.log('d3', d3);
 
         //this.loadD3();
+        this.renderLinearScale();
     }
 
     async loadData() {
@@ -80,11 +81,19 @@ class App extends Component {
 
         const y = d3.scaleLinear()
             .domain([15, 90])
-            .range([0, 250]);
+            .range([250, 0]);
 
         const x = d3.scaleLog()
             .domain([250, 100000])
             .range([0, 600]);
+
+        const r = d3.scaleSqrt().domain([52070, 1380000000]).range([10, 40]);
+
+        svg.append('circle')
+            .attr('fill', 'red')
+            .attr('cx', x(13330))
+            .attr('cy', y(77))
+            .attr('r', r(1380000000));
     }
 
     render() {
